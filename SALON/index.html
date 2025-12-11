@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sniper Audit (Full) - AGÜERO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-void: #0A0A0B;
+            --bg-surface: #1A1A1C;
+            --text-primary: #EDEDED;
+            --text-secondary: #A1A1AA;
+            
+            --accent-lima: #D4FF00;   /* Solución / Esperanza */
+            --alert-error: #FF4D4D;   /* Problema / Alerta */
+            
+            --border-grid: #333333;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'Roboto Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .doc-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--bg-surface);
+            padding: 60px;
+            border: 1px solid var(--border-grid);
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+
+        /* HEADER & META */
+        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-grid); padding-bottom: 25px; }
+        .logo-svg { height: 35px; display: block; margin-bottom: 15px; }
+        .doc-title { font-size: 22px; font-weight: 700; line-height: 1.2; text-transform: uppercase; letter-spacing: -0.5px; }
+        .meta-tag { font-family: var(--font-code); font-size: 11px; color: var(--text-secondary); text-align: right; }
+        .meta-tag strong { color: var(--alert-error); }
+
+        /* --- SCORE SECTION (EL GOLPE VISUAL) --- */
+        .score-section {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 50px;
+            background: rgba(255, 77, 77, 0.05);
+            padding: 35px;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            border-left: 5px solid var(--alert-error);
+        }
+        
+        .score-circle {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--border-grid);
+            display: flex; justify-content: center; align-items: center;
+            font-family: var(--font-code); font-size: 36px; font-weight: 700;
+            color: var(--alert-error); position: relative;
+        }
+        .score-circle::after {
+            content: ''; position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--alert-error); border-right-color: var(--alert-error);
+            transform: rotate(-20deg);
+        }
+
+        .score-info h2 { margin: 0 0 10px 0; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-primary); }
+        .score-info p { margin: 0; font-size: 15px; color: #ccc; line-height: 1.5; }
+
+        /* --- SECTION HEADERS --- */
+        .section-header { margin-top: 50px; margin-bottom: 25px; display: flex; align-items: center; border-bottom: 1px solid var(--border-grid); padding-bottom: 15px; }
+        .section-num { font-family: var(--font-code); font-size: 12px; color: var(--bg-void); background: var(--text-secondary); padding: 2px 6px; margin-right: 10px; font-weight: 700; }
+        .section-title { font-family: var(--font-code); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--text-secondary); }
+
+        /* COLORS FOR SPECIFIC SECTIONS */
+        .autopsy-num { background: var(--alert-error); color: white; }
+        .autopsy-title-color { color: var(--alert-error); }
+        .solution-num { background: var(--accent-lima); color: black; }
+        .solution-title-color { color: var(--accent-lima); }
+
+        /* --- 01. CONTEXTO STYLES --- */
+        .intro-text { font-size: 15px; color: #ccc; margin-bottom: 20px; padding-left: 10px; }
+        .quote-box {
+            border-left: 3px solid var(--accent-lima);
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.02);
+            font-style: italic;
+            color: white;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+
+        /* --- 02. AUTOPSY STYLES --- */
+        .audit-card { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px dashed #333; }
+        .audit-card:last-of-type { border-bottom: none; }
+        .problem-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .icon-alert { color: var(--alert-error); margin-right: 12px; font-size: 18px; }
+        .problem-title { font-size: 16px; font-weight: 600; color: white; text-transform: uppercase; }
+        .observation { font-size: 14px; color: #ccc; margin-bottom: 20px; padding-left: 30px; }
+        
+        /* EVIDENCIA VISUAL */
+        .image-evidence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0 25px 30px; }
+        .evidence-placeholder {
+            height: 180px; background: #0f0f0f; border: 1px dashed var(--text-secondary);
+            display: flex; justify-content: center; align-items: center;
+            color: #666; font-family: var(--font-code); font-size: 11px; text-transform: uppercase;
+            position: relative; overflow: hidden;
+        }
+        .evidence-img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--border-grid); }
+
+        .consequence { background: #111; padding: 20px; margin-left: 30px; font-size: 13px; color: #bbb; border-left: 3px solid var(--alert-error); }
+        .consequence strong { color: var(--alert-error); text-transform: uppercase; font-size: 11px; margin-right: 5px; display: block; margin-bottom: 5px; }
+
+        /* --- 03. PRICING STYLES --- */
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
+        .pricing-card { border: 1px solid var(--border-grid); padding: 25px 15px; text-align: center; background: rgba(255,255,255,0.01); display: flex; flex-direction: column; justify-content: space-between; }
+        .card-recommended { border: 1px solid var(--accent-lima); background: rgba(212, 255, 0, 0.02); box-shadow: 0 0 30px rgba(212, 255, 0, 0.05); position: relative; transform: scale(1.05); z-index: 10; }
+        .badge-rec { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--accent-lima); color: black; font-family: var(--font-code); font-size: 9px; font-weight: 700; padding: 4px 8px; text-transform: uppercase; }
+        .plan-name { font-size: 13px; font-weight: 700; color: white; margin-bottom: 5px; text-transform: uppercase; }
+        .plan-price { font-family: var(--font-code); font-size: 20px; color: white; font-weight: 700; margin-bottom: 15px; display: block; }
+        .plan-features { font-size: 11px; color: #aaa; text-align: left; padding: 0 10px; list-style: none; margin: 0; }
+        .plan-features li { margin-bottom: 6px; padding-left: 10px; position: relative; }
+        .plan-features li::before { content: "•"; position: absolute; left: 0; color: var(--text-secondary); }
+        .card-recommended .plan-price, .card-recommended .plan-features li::before { color: var(--accent-lima); }
+.price-old {
+            font-family: var(--font-deco);
+            font-size: 14px;
+            color: #666; /* Color apagado */
+            text-decoration: line-through; /* La línea de tachado */
+            margin-bottom: -5px; /* Acercarlo al precio nuevo */
+            font-weight: 400;
+        }
+
+        /* FOOTER */
+        .cta-box { margin-top: 60px; border-top: 1px dashed #444; padding-top: 30px; text-align: center; }
+        .cta-final-block { background: #111; padding: 25px; display: inline-block; border: 1px solid #333; text-align: left;}
+        .footer-sig { margin-top: 50px; font-family: var(--font-code); font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .doc-container { box-shadow: none; border: none; } .pricing-grid { gap: 10px; } .pricing-card { padding: 15px 5px; } }
+    </style>
+</head>
+<body>
+
+    <div class="doc-container">
+        
+        <header class="header">
+            <div>
+                <img src="logo-aguero.svg" alt="AGÜERO" class="logo-svg">
+                <div class="doc-title">RE: Auditoría Visual /<br>Puntos de Fuga</div>
+            </div>
+            <div class="meta-tag">
+                PARA: <strong>ariannaboutique19</strong><br>
+                ESTADO: <strong>CRÍTICO</strong><br>
+                FECHA: 10/12/2025
+            </div>
+        </header>
+
+        <section class="score-section">
+            <div class="score-circle">4.5</div> 
+            <div class="score-info">
+                <h2>Estado Crítico / Riesgo</h2>
+                <p>Tu servicio es excelente, pero tu imagen está ahuyentando a los clientes premium. Hay una desconexión severa entre valor y precio.</p>
+            </div>
+        </section>
+
+        <div class="section-header">
+            <span class="section-num">01</span>
+            <span class="section-title">El Contexto (La Verdad sin Filtros)</span>
+        </div>
+        <div class="intro-text">
+            <p>Hola, <strong>Arianna</strong>.</p>
+            <p>He estado monitoreando la trayectoria de tu marca. Tienes un modelo de negocio sólido y se nota que hay calidad en lo que entregas. Sin embargo, mi trabajo es detectar dónde las empresas están dejando dinero sobre la mesa, y en tu caso, el problema es visible.</p>
+            
+            <div class="quote-box">
+                "Tu facturación está en un nivel, pero tu imagen está dos escalones abajo. En digital, 'parecer' barato es igual a 'ser' barato."
+            </div>
+            
+            <p>Mi intención no es criticar, es mostrarte qué te frena para cobrar lo que vales.</p>
+        </div>
+
+
+        <div class="section-header">
+            <span class="section-num autopsy-num">02</span>
+            <span class="section-title autopsy-title-color">La Autopsia (Evidencia de Fricción)</span>
+        </div>
+        <p style="margin-bottom: 40px; font-size: 14px; color: #ccc; padding-left: 30px;">Analicé tus puntos de contacto bajo mi metodología. He detectado 3 errores técnicos que están diluyendo tu autoridad ahora mismo:</p>
+
+        <div class="audit-card">
+            <div class="problem-header">
+                <span class="icon-alert">🚨</span>
+                <span class="problem-title">A. Incoherencia Visual</span>
+            </div>
+            <div class="observation">
+                <strong>Lo que veo:</strong> Tu logotipo actual no es responsive; se pixela en formatos móviles y es confuso a primera vista. Usas múltiples tipografías en tus publicaciones que chocan entre sí, generando ruido visual. Ademas al verse en dispositivos pequeños, no se puede distinguir muy bien. <br>
+                No tienes iconos en tus historias destacadas y no aportan personalidad a tu marca.
+            </div>
+            
+            <div class="image-evidence-grid">
+                <img src="logo.jpg" class="evidence-img">
+                <img src="tipografia.png" class="evidence-img">
+            </div>
+            
+            <div class="consequence">
+                <strong>EL COSTO:</strong>
+                El cliente percibe desorden. Si tu imagen es caótica, asumen inconscientemente que tu servicio también lo será. Estás perdiendo confianza antes de la venta.
+            </div>
+        </div>
+
+        <div class="audit-card">
+            <div class="problem-header">
+                <span class="icon-alert">📉</span>
+                <span class="problem-title">B. Mensaje Difuso</span>
+            </div>
+            <div class="observation">
+                <strong>Lo que veo:</strong> No tienes una identidad visual establecida, la gente suele preferir una marca sobre otras por su conexión con ella, si logramos afianzar tu identidad tu marca destacará aun mas sobre la competencia. Tu biografia tampoco refleja tu identidad, se percibe desordenada.
+            </div>
+            
+            <div class="image-evidence-grid">
+                <img src="bio.png" class="evidence-img">
+                <img src="posts.png" class="evidence-img">
+            </div>
+
+            <div class="consequence">
+                <strong>EL COSTO:</strong>
+                Confusión. En internet, si no entiendo qué haces rápido, me voy a la competencia. Tu mensaje actual informa, pero no convierte.
+            </div>
+        </div>
+
+        <div class="audit-card">
+            <div class="problem-header">
+                <span class="icon-alert">🕸</span>
+                <span class="problem-title">C. Deuda Técnica</span>
+            </div>
+            <div class="observation">
+                <strong>Lo que veo:</strong> No tienes una infraestructura de captación. Estás enviando tráfico a un Home que no se encuentra operativo, en lugar de usar una Landing Page optimizada. Con una Landing Page podras aumentar tus conversiones de clientes y aprovechar las redes sociales de mejor manera.
+            </div>
+            <div class="consequence">
+                <strong>EL COSTO:</strong>
+                Fricción. Estás obligando a tu cliente a esforzarse demasiado para entender cómo comprarte, perdiendo oportunidades de venta automática.
+            </div>
+        </div>
+
+
+        <div class="section-header" style="border-color: var(--accent-lima);">
+            <span class="section-num solution-num">03</span>
+            <span class="section-title solution-title-color">Propuesta de Intervención</span>
+        </div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div>
+                    <div class="plan-name">Opción A<br>Brand Core</div>
+                    <span class="price-old">$300</span>
+                    <span class="plan-price">$240</span>
+                </div>
+                <ul class="plan-features">
+                    <li>Rediseño de Logotipo</li>
+                    <li>Sistema Visual (Fuentes/Color)</li>
+                    <li>Manual de Marca "Lite"</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card card-recommended">
+                <div class="badge-rec">RECOMENDADA</div>
+                <div>
+                    <div class="plan-name" style="color: var(--accent-lima);">Opción B<br>Digital Presence</div>
+                    <span class="price-old">$600</span>
+                    <span class="plan-price">$480</span>
+                </div>
+                <ul class="plan-features">
+                    <li><strong>Todo lo de la Opción A</strong></li>
+                    <li>Landing Page (Ventas)</li>
+                    <li>Estrategia Visual (Dir. Arte)</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <div>
+                    <div class="plan-name">Opción C<br>Total Evolution</div>
+                    <span class="price-old">$800</span>
+                    <span class="plan-price">$900</span>
+                </div>
+                <ul class="plan-features">
+                    <li>Identidad Completa</li>
+                    <li>Web Corporativa</li>
+                    <li>Lanzamiento Guiado</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="cta-box">
+            <div class="cta-final-block">
+                <strong style="color: var(--accent-lima); display: block; margin-bottom: 15px; font-size: 14px;">🚀 SIGUIENTE PASO</strong>
+                <p style="font-size: 13px; margin: 0; color: #ccc; line-height: 1.8;">
+                    1. Responde a este mensaje con "OPCIÓN [A, B o C]".<br>
+                    2. Te envío el contrato digital y datos de reserva (50%).<br>
+                    3. Agendamos la sesión de inicio esta misma semana.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-sig">
+            Ricardo Agüero | Director & Estratega<br>
+            <span style="color: var(--accent-lima);">AGÜERO.DESIGN</span>
+        </div>
+
+    </div>
+
+</body>
+</html>
